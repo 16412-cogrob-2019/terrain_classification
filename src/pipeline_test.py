@@ -6,34 +6,29 @@ from svm import classify, image_print
 from predict_image import predict_relevant
 import pickle
 import copy
-import skimage.io as io
-from skimage.transform import resize
+# import skimage.io as io
+# from skimage.transform import resize
 
 f2 = open('clf_10000_iters_5_0.pkl', 'rb')
 clf = pickle.load(f2)
 
-#for img_number in [i for i in range(1,51) if i%a != 0]:
-for img_number in [1]:
-	CNN_image = mpimg.imread("image" + str(img_number) + ".png", 0)
-	# CNN_image = resize(CNN_image, (256, 256), anti_aliasing=True)
-	# image_print(CNN_image)
+for img_number in [i for i in range(1,51) if i%5 == 0]:
 
 	image = cv2.imread("originals/image" + str(img_number) + ".png");
 	img = cv2.resize(image, (256,256))
 	image = img.copy()
 	print('img loaded')
 
-	# rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-	# print(rgb_img.shape, type(rgb_img))
+	rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2R)
 	# get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
-	obstacles_lst = predict_relevant(CNN_image/255)
+	obstacles_lst = predict_relevant(rgb_img/255)
 	print('CNN done')
 
 	# turn list of pixels into list of feature vectorsfor each pixel in each obstacle
 	X = []
 	for obstacle_lst in obstacles_lst:
-		X.append([[image[j][i]/255.0 for i,j in obstacle_lst]]) # double check whether its j,i or i,j
-	# print(obstacles_lst)
+		X.append([[image[j][i]/255.0 for j,i in obstacle_lst]])
+
 
 	# SVM classifications list - classifies each obstacle in the list
 	classifications = classify(image, clf, X)
@@ -53,3 +48,6 @@ for img_number in [1]:
 	vis = np.concatenate((img, image), axis=1)
 
 	image_print(vis)
+
+	# uncomment this if you want to save output image
+	# cv2.imwrite("output_comparison_image"+ str(img_number) + ".png", vis)
