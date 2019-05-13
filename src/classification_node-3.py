@@ -21,12 +21,15 @@ class Classification:
         rospy.Subscriber('/raspicam_node/image/compressed', CompressedImage ,self.img_callback, queue_size = 1)
         self.image_pub = rospy.Publisher('/classified_image', Image, queue_size = 1)
         self.bridge = CvBridge()
-        self.clf = pickle.load(open('clf_10000_iters_5_0.pkl', 'rb')) #SVM classifier
-
+        self.clf = pickle.load(open('clf_p2.pkl', 'rb')) #SVM classifier
+	self.i = True
 
     def img_callback(self, img):
         # convert ros image message into an open cv image
-        try:
+        if self.i:
+            self.i = False
+	    return
+	try:
             image = self.bridge.compressed_imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
             print(e)
@@ -36,7 +39,7 @@ class Classification:
         image = img.copy()
         print('img loaded')
 
-        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2R)
+        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         # get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
         obstacles_lst = predict_relevant(rgb_img/255)
         print('CNN done')
@@ -48,7 +51,7 @@ class Classification:
 
 
         # SVM classifications list - classifies each obstacle in the list
-        classifications = classify(image, clf, X)
+        classifications = classify(image, self.clf, X)
         print('svm done')
 
         # format the output, change the pixel values of obstacles to red or green based on classification
