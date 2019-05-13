@@ -69,10 +69,10 @@ class Classification:
 
         #image_print(vis)
 
-            try:
-                self.image_pub.publish(self.bridge.cv2_to_imgmsg(vis, "bgr8"))
-            except CvBridgeError as e:
-                print(e)
+        try:
+            self.image_pub.publish(self.bridge.cv2_to_imgmsg(vis, "bgr8"))
+        except CvBridgeError as e:
+            print(e)
 
 
 if __name__ == "__main__":
