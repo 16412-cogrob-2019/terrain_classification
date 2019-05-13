@@ -7,13 +7,12 @@ from cv_bridge import CvBridge, CvBridgeError
 #import CNN weights
 #import svm file
 from svm import classify, most_common
-from predict_image import predict_relevant
+from predict_image import predict_relevant, convert_for_CNN
 import pickle
 #import matplotlib.image as mpimg
 #from PIL import Image
 import numpy as np
 from svm import classify, image_print
-from predict_image import predict_relevant
 import copy
 
 class Classification:
@@ -28,20 +27,22 @@ class Classification:
         # convert ros image message into an open cv image
         if self.i:
             self.i = False
-	    return
+        else:
+            return
 	try:
             image = self.bridge.compressed_imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
             print(e)
 
-    
+
         img = cv2.resize(image, (256,256))
         image = img.copy()
         print('img loaded')
 
-        rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        #rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        rgb_img = convert_for_CNN(img)
         # get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
-        obstacles_lst = predict_relevant(rgb_img/255)
+        obstacles_lst = predict_relevant(rgb_img)
         print('CNN done')
 
         # turn list of pixels into list of feature vectorsfor each pixel in each obstacle
