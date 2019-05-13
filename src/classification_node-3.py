@@ -21,7 +21,7 @@ class Classification:
         rospy.Subscriber('/raspicam_node/image/compressed', CompressedImage ,self.img_callback, queue_size = 1)
         self.image_pub = rospy.Publisher('/classified_image', Image, queue_size = 1)
         self.bridge = CvBridge()
-        self.clf = pickle.load(open('clf.pkl', 'rb')) #SVM classifier
+        self.clf = pickle.load(open('clf_10000_iters_5_0.pkl', 'rb')) #SVM classifier
 
 
     def img_callback(self, img):
@@ -30,9 +30,6 @@ class Classification:
             image = self.bridge.compressed_imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
             print(e)
-
-        f2 = open('clf_10000_iters_5_0.pkl', 'rb')
-        clf = pickle.load(f2)
 
     
         img = cv2.resize(image, (256,256))
