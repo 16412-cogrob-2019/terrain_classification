@@ -117,7 +117,7 @@ def testing(clf, a, b):
 # # pickle.dump(clf, f)
 # # f.close()
 
-f2 = open('/home/mers/catkin_ws/src/terrain_classification/src/clf.pkl', 'rb')
-clf = pickle.load(f2)
+#f2 = open('/home/mers/catkin_ws/src/terrain_classification/src/clf.pkl', 'rb')
+#clf = pickle.load(f2)
 
-print(testing(clf,25,1))
+#print(testing(clf,25,1))

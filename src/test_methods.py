@@ -2,11 +2,11 @@
 import matplotlib.image as mpimg
 import numpy as np
 import matplotlib.pyplot as plt
-import helpers as h
+#import helpers as h
 import os,sys
 from os import *
-import skimage.io as io
-from PIL import Image
+#import skimage.io as io
+#from PIL import Image
 
 
 

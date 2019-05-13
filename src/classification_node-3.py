@@ -10,7 +10,7 @@ from svm import classify, most_common
 from predict_image import predict_relevant
 import pickle
 #import matplotlib.image as mpimg
-from PIL import Image
+#from PIL import Image
 import numpy as np
 from svm import classify, image_print
 from predict_image import predict_relevant
