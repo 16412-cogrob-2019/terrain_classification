@@ -46,6 +46,7 @@ class Classification:
             print(e)
 
 
+        image_full = image
         img = cv2.resize(image, (256,256))
         image = img.copy()
         print(img.dtype)
@@ -70,7 +71,7 @@ class Classification:
             classifications = classify(image, self.clf, X)
         else:
             self.clf = pickle.load(open('texture_svm.pkl', 'rb'))
-            classifications = ts.predict_img(self.clf, image, obstacles_lst)
+            classifications = ts.predict_img(self.clf, image_full, obstacles_lst)
             print(len(obstacles_lst))
             print(classifications)
 

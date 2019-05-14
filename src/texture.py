@@ -43,7 +43,11 @@ def show(img):
 
 def img_extract_obj(img,inds):
     vartype_uint8 = type(np.uint8(0))
+    vartype_float32 = type(np.float32(0))
+    print('type',type(img[0,0]), img[0,0])
     if isinstance(img[0,0],vartype_uint8):
+        img[inds[0],inds[1]] = 0
+    elif isinstance(img[0,0],vartype_float32):
         img[inds[0],inds[1]] = 0
     else:
         print(img.shape)
@@ -185,22 +189,32 @@ def getFeature(img, inds, inds_b):
 
 def rescale_im(im,pixel_list):
     new_list = []
+    zz_list = []
     for i in range(len(pixel_list)):
         gt_im = np.zeros(im.shape[0:2])
         for pixel in pixel_list[i]:
             gt_im[pixel[0],pixel[1]] = 1
-            new_size1 = 640
-            new_size2 = 480
-            new_gt_im = cv2.resize(gt, (new_size1,new_size2))
-            new_list.append(new_gt_im)
-        return new_list
+        new_size1 = 640
+        new_size2 = 480
+        new_gt_im = cv2.resize(gt_im, (new_size1,new_size2))
+        zz = len(np.where(new_gt_im == 1))
+        new_list.append(new_gt_im)
+        zz_list.append(new_gt_im)
+    print('new_list: ', zz_list)
+    return new_list
 
 def extract_features_img(gt,im,vectors_x):
     # get indices for object pixels
     #obj_list = get_objs(gt)
-
-    #rescale_im(im,gt)
-    obj_list = convert_objs(gt)
+    rescale = True
+    if rescale == True:
+        list_gt_ims = rescale_im(im,gt)
+        obj_list = get_objs(list_gt_ims)
+        new_size1 = 640
+        new_size2 = 480
+        #im = cv2.resize(im, (new_size1,new_size2))
+    else:
+        obj_list = convert_objs(gt)
     
     for i in range(len(obj_list)):
         [inds, inds_b] = obj_list[i]
@@ -280,6 +294,11 @@ def predict_img(clf,im,im_seg):
     vectors_pred = extract_features_img(im_seg,im,vectors_pred)
 
     prediction = clf.predict(vectors_pred)
+
+    print('test_vectors: ', vectors_pred)
+    # test_pred = clf.predict([[-.1, -.1]])
+    # print('test pred: ', test_pred)
+
     print('prediction: ', prediction)
     return prediction#, vectors_pred
 
