@@ -64,7 +64,7 @@ class Classification:
 
 
         # SVM classifications list - classifies each obstacle in the list
-        colorflag = False
+        colorflag = True
         if colorflag:
         #classifications = classify(image, self.clf, X)
             classifications = classify(image, self.clf, X)
