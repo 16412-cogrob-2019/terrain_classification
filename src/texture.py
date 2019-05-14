@@ -183,9 +183,23 @@ def getFeature(img, inds, inds_b):
 
     # reshape into feature vector
 
+def rescale_im(im,pixel_list):
+    new_list = []
+    for i in range(len(pixel_list)):
+        gt_im = np.zeros(im.shape[0:2])
+        for pixel in pixel_list[i]:
+            gt_im[pixel[0],pixel[1]] = 1
+            new_size1 = 640
+            new_size2 = 480
+            new_gt_im = cv2.resize(gt, (new_size1,new_size2))
+            new_list.append(new_gt_im)
+        return new_list
+
 def extract_features_img(gt,im,vectors_x):
     # get indices for object pixels
     #obj_list = get_objs(gt)
+
+    #rescale_im(im,gt)
     obj_list = convert_objs(gt)
     
     for i in range(len(obj_list)):
