@@ -15,6 +15,7 @@ import pickle
 import numpy as np
 from svm import classify, image_print
 import copy
+import texture as ts 
 
 class Classification:
     def __init__(self):
@@ -53,7 +54,7 @@ class Classification:
         rgb_img = convert_for_CNN(img)
         print(rgb_img.dtype)
         # get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
-        obstacles_lst = predict_relevant(rgb_img)
+        obstacles_lst,imagearray = predict_relevant(rgb_img)
         print('CNN done')
 
         # turn list of pixels into list of feature vectorsfor each pixel in each obstacle
@@ -63,7 +64,16 @@ class Classification:
 
 
         # SVM classifications list - classifies each obstacle in the list
-        classifications = classify(image, self.clf, X)
+        colorflag = False
+        if colorflag:
+        #classifications = classify(image, self.clf, X)
+            classifications = classify(image, self.clf, X)
+        else:
+            self.clf = pickle.load(open('texture_svm.pkl', 'rb'))
+            classifications = ts.predict_img(self.clf, image, obstacles_lst)
+            print(len(obstacles_lst))
+            print(classifications)
+
         print('svm done')
 
         # format the output, change the pixel values of obstacles to red or green based on classification

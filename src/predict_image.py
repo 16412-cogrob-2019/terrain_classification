@@ -24,7 +24,8 @@ def predict_relevant(image):
     result = np.reshape(result,(prev_shape[0],prev_shape[1],1))
     #find relevant pixels 
     pixels = get_pixel_list_of_obstacles(result)
-    return pixels
+    
+    return pixels, np.reshape(result,(prev_shape[0],prev_shape[1]))
 
 
 
