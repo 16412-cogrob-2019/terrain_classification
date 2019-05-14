@@ -7,7 +7,8 @@ from cv_bridge import CvBridge, CvBridgeError
 #import CNN weights
 #import svm file
 from svm import classify, most_common
-from predict_image import predict_relevant, convert_for_CNN
+from predict_image import predict_relevant 
+from test_methods import convert_for_CNN
 import pickle
 #import matplotlib.image as mpimg
 #from PIL import Image
@@ -17,19 +18,28 @@ import copy
 
 class Classification:
     def __init__(self):
-        rospy.Subscriber('/raspicam_node/image/compressed', CompressedImage ,self.img_callback, queue_size = 1)
+        rospy.Subscriber('/raspicam_node/image/compressed', CompressedImage, self.throttle_image, queue_size = 1)
+        rospy.Subscriber('/throttled_image', CompressedImage, self.img_callback, queue_size = 1)        
+        self.throttled_image_pub = rospy.Publisher('/throttled_image', CompressedImage, queue_size = 1)
         self.image_pub = rospy.Publisher('/classified_image', Image, queue_size = 1)
         self.bridge = CvBridge()
         self.clf = pickle.load(open('clf_p2.pkl', 'rb')) #SVM classifier
-	self.i = True
+        self.i = True
 
-    def img_callback(self, img):
-        # convert ros image message into an open cv image
+    def throttle_image(self, img):
         if self.i:
             self.i = False
         else:
             return
-	try:
+        self.throttled_image_pub.publish(img)
+
+    def img_callback(self, img):
+        # convert ros image message into an open cv image
+        # if self.i:
+        #     self.i = False
+        # else:
+        #    return
+        try:
             image = self.bridge.compressed_imgmsg_to_cv2(img, "bgr8")
         except CvBridgeError as e:
             print(e)
@@ -37,10 +47,11 @@ class Classification:
 
         img = cv2.resize(image, (256,256))
         image = img.copy()
+        print(img.dtype)
         print('img loaded')
-
         #rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         rgb_img = convert_for_CNN(img)
+        print(rgb_img.dtype)
         # get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
         obstacles_lst = predict_relevant(rgb_img)
         print('CNN done')
@@ -72,6 +83,7 @@ class Classification:
 
         try:
             self.image_pub.publish(self.bridge.cv2_to_imgmsg(vis, "bgr8"))
+            self.i = True
         except CvBridgeError as e:
             print(e)
 

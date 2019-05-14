@@ -77,24 +77,24 @@ def make_grayscale(images):
     images = np.asarray(images)
     return images
 
-#method to save predicted images
-def save_result(save_path,npyfile, name, grayscale = True):
-    #iterates over all images
-    for i,img in enumerate(npyfile):
-        #if grayscale we transform array
-        if(grayscale):
-            img = img[:,:,0]
-        #image is saved to specified path
-        io.imsave(os.path.join(save_path,name%(i+1)),img)
+# #method to save predicted images
+# def save_result(save_path,npyfile, name, grayscale = True):
+#     #iterates over all images
+#     for i,img in enumerate(npyfile):
+#         #if grayscale we transform array
+#         if(grayscale):
+#             img = img[:,:,0]
+#         #image is saved to specified path
+#         io.imsave(os.path.join(save_path,name%(i+1)),img)
         
 def load_image(infilename):
     img = cv2.imread(infilename)
     return convert_for_CNN(img)
     
 def convert_for_CNN(img):
-    #input must be between 0 and 1
     img = cv2.resize(img,(256,256))
-    img = img/255
+    #input must be between 0 and 1
+    img = img/255.0
     #switch from BGR to RGB
     img = img[:,:,::-1]
     return img
@@ -125,12 +125,12 @@ def fill_pixel(obstacle,pixel,index):
             exists_above=True
         if (tup[1]==pixel[1] and tup[0]>pixel[0]):
             exists_below=True
-        if(exists_above or exists_below):
+        if(exists_above and exists_below):
             obstacle.insert(index,pixel)
             return
         
 
-def get_pixel_list_of_obstacles(segmented_image, threshold=0.15,generate_own_threshold=False,katie=True,min_length=100):
+def get_pixel_list_of_obstacles(segmented_image, threshold=0.22,generate_own_threshold=False,katie=False,min_length=100):
     list_of_obstacles=[]
     img_copy = segmented_image.copy()
     if generate_own_threshold:

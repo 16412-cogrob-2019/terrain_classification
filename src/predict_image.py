@@ -14,18 +14,17 @@ def predict_relevant(image):
     image = np.reshape(image,(1,)+image.shape)
     #get predicted array
     result = model.predict(image)
+    print(result.mean())
+    #cv2.imshow("Image",result)
+    #cv2.waitKey(0)
+    #cv2.destroyAllWindows()
     #reshape back 
-    save_result("camera_resized",result,"image%d.png")
+    # save_result("camera_resized",result,"image%d.png")
 
     result = np.reshape(result,(prev_shape[0],prev_shape[1],1))
     #find relevant pixels 
     pixels = get_pixel_list_of_obstacles(result)
     return pixels
 
-def convert_for_CNN(img):
-    #input must be between 0 and 1
-    img = img/255
-    #switch from BGR to RGB
-    img = img[:,:,::-1]
-    return img
+
 
