@@ -1,3 +1,8 @@
+'''
+This file contains one method that is called upon in the pipeline. The method further calls upon methods from test_methods.py.
+It takes an image as input, and returns both the list of pixels that is predicted to contain obstacles, as well as the prediction of the image.
+'''
+
 from test_methods import *
 from unet import *
 import numpy as np
