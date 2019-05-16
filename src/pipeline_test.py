@@ -19,9 +19,10 @@ for img_number in [i for i in range(1,51) if i%5 == 0]:
 	image = img.copy()
 	print('img loaded')
 
-	rgb_img = cv2.cvtColor(img, cv2.COLOR_BGR2R)
+	#the image is converted for a suitable representation that can be passed to the CNN
+	rgb_img = convert_for_CNN(image)
 	# get pixels from CNN -- list of obstacles, which are lists of pixels that make up each obstacle
-	obstacles_lst = predict_relevant(rgb_img/255)
+	obstacles_lst = predict_relevant(rgb_img)
 	print('CNN done')
 
 	# turn list of pixels into list of feature vectorsfor each pixel in each obstacle
